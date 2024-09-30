@@ -6,6 +6,8 @@ from aiogram import Router
 from dotenv import load_dotenv
 import os
 
+import json
+import aiohttp
 # Load environment variables
 load_dotenv()
 
@@ -42,20 +44,23 @@ async def send_to_llama(user_prompt):
     # Prepare the API call payload
     data = {
         "model": LLAMA_MODEL,
-        "messages": conversation_history
+        "messages": conversation_history,
+        "stream": False
     }
 
-    # Send the request to Ollama API
-    response = requests.post(OLLAMA_API_URL, json=data)
+    async with aiohttp.ClientSession() as session:
+        async with session.post(OLLAMA_API_URL, json=data) as response:
+            if response.status == 200:
+                json_data = await response.json()
 
-    if response.status_code == 200:
-        response_data = response.json()
-        assistant_reply = response_data['choices'][0]['message']['content']
-
-        # Append the assistant's response to the conversation history
-        conversation_history.append({"role": "assistant", "content": assistant_reply})
-        return assistant_reply
-    else:
-        return "An error occurred while communicating with the LLaMA model."
+                # Now use 'message' field directly
+                if 'message' in json_data:
+                    assistant_reply = json_data['message']['content']
+                    conversation_history.append({"role": "assistant", "content": assistant_reply})
+                    return assistant_reply
+                else:
+                    return f"Unexpected response format: {json_data}"
+            else:
+                return "Error communicating with the LLaMA model."
 
 # Register command and message handlers

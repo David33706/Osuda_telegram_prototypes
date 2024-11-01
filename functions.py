@@ -28,7 +28,6 @@ async def process_prompt(message: Message):
 
         model = whisper.load_model("turbo")
         result = model.transcribe(temp_filename)
-        print(result["text"])
         return result["text"]
     else:
         return message.text

@@ -23,6 +23,9 @@ async def handle_message(message: Message):
     global conversation_history
 
     user_prompt = await process_prompt(message)
+    await message.answer(
+        f"The following is your prompt: \n\n<i>{user_prompt}</i>\n\n Now, Osuda AI will send an answer",
+        parse_mode="html")
     llama_response = await send_to_llama(user_prompt, conversation_history)
     await message.answer(llama_response)
 

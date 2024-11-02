@@ -3,7 +3,9 @@ from aiogram.types import Message, CallbackQuery
 from aiogram import Router
 
 from aiogram import F
-from buttons.inline_button import mood_emoji_buttons
+from numba.core.cgutils import printf
+
+from buttons.inline_button import mood_emoji_buttons, generate_emoji_keywords
 from handlers.handler import send_to_llama
 
 mood_router = Router()
@@ -16,8 +18,13 @@ async def cmd_mood(message: Message):
 
 @mood_router.callback_query(F.data.endswith("emoji"))
 async def cmd_emoji(callback: CallbackQuery):
+    await callback.message.edit_text(text=f"Do you feeling specific emotion associate with this mood?",
+                                        reply_markup=await generate_emoji_keywords(callback.data.split("_")[0]))
 
-    user_prompt = f"When asked about their mood, users responded with the following emoji: {callback.data}. Adapt your responses according to their mood. You can start by asking why they are feeling this way but don't instantly offer the solution."
+
+@mood_router.callback_query(F.data.startswith("keyword"))
+async def cmd_emoji(callback: CallbackQuery):
+    user_prompt = f"When asked about their mood with the list of keywords, user responded with the following word: {callback.data.split("_")[1]}. Adapt your responses according to their mood. You can start by asking why they are feeling this way but don't instantly offer the solution."
     llama_response = await send_to_llama(user_prompt)
     await callback.message.answer(llama_response)
     await callback.answer()

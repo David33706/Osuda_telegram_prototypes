@@ -4,7 +4,8 @@ from aiogram import Bot
 from dotenv import load_dotenv
 import os
 
-from handler import router
+from handlers.handler import router
+from handlers.mood_handler import mood_router
 
 load_dotenv()
 bot = Bot(os.getenv("TOKEN"))
@@ -12,6 +13,7 @@ dp = Dispatcher()
 
 
 async def main():
+    dp.include_router(mood_router)
     dp.include_router(router)
     await dp.start_polling(bot)
 

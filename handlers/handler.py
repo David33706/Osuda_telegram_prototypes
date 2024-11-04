@@ -37,12 +37,12 @@ router = Router()
 
 
 @router.message(CommandStart())
-async def cmd_start(message: Message, state: FSMContext):
+async def cmd_start(message: Message):
     await message.answer("Hello. I am Osuda AI")
-    await state.set_state(Daily_mood.messaging_status)
 
 
-@router.message(Daily_mood.messaging_status)
+
+@router.message()
 async def handle_message(message: Message):
     user_prompt = message.text
     llama_response = await send_to_llama(user_prompt)

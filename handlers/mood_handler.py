@@ -20,27 +20,28 @@ async def cmd_mood(message: Message, state: FSMContext):
 
 
 @mood_router.callback_query(F.data.endswith("emoji"), Daily_mood.emoji_status)
-async def cmd_emoji(callback: CallbackQuery, state: FSMContext):
+async def cmd_keyword(callback: CallbackQuery, state: FSMContext):
     await state.update_data(emoji_status=callback.data)
     await state.set_state(Daily_mood.mood_keyword)
     await callback.message.edit_text(text=f"Do you feel specific emotion associate with this mood?",
                                      reply_markup=await generate_emoji_keywords(callback.data.split("_")[0]))
+    await callback.answer()
 
 
 @mood_router.callback_query(F.data.startswith("keyword"), Daily_mood.mood_keyword)
 async def cmd_emoji(callback: CallbackQuery, state: FSMContext):
-    await state.update_data(mood_keyword=callback.data)
+    await state.update_data(mood_keyword=callback.data.split("_")[-1])
     await state.set_state(Daily_mood.confirmation)
-    await callback.message.edit_text(text=f"Do you want to talk about this?", reply_markup=yes_no_mood)
+    await callback.message.answer(text=f"Do you want to talk about this?")
+    await callback.answer()
 
 
-@mood_router.callback_query(F.data.endswith("_mood"), Daily_mood.confirmation)
-async def cmd_yes_no_mood(callback: CallbackQuery, state: FSMContext):
-    await state.update_data(confirmation=callback.data.split("_")[0])
+@mood_router.message(Daily_mood.confirmation)
+async def cmd_yes_no_mood(message: Message, state: FSMContext):
+    await state.update_data(confirmation=message.text.split("_")[0])
     mood_data = await state.get_data()
     await process_mood(mood_data)
-    user_prompt = f"{callback.data.split("_")[0]}"
+    user_prompt = f"{message.text.split("_")[0]}"
     llama_response = await send_to_llama(user_prompt)
-    await callback.message.answer(llama_response)
-    await callback.answer()
+    await message.answer(llama_response)
     await state.clear()

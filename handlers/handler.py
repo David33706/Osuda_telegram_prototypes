@@ -1,16 +1,21 @@
 import requests
 from aiogram import types
 from aiogram.filters import Command, CommandStart
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from aiogram import Router
 
 from dotenv import load_dotenv
 import os
 
+from sympy import pprint
+
 from buttons.inline_button import mood_emoji_buttons
 
 import json
 import aiohttp
+
+from states.state import Daily_mood
 
 # Load environment variables
 load_dotenv()
@@ -32,11 +37,12 @@ router = Router()
 
 
 @router.message(CommandStart())
-async def cmd_start(message: Message):
+async def cmd_start(message: Message, state: FSMContext):
     await message.answer("Hello. I am Osuda AI")
+    await state.set_state(Daily_mood.messaging_status)
 
 
-@router.message()
+@router.message(Daily_mood.messaging_status)
 async def handle_message(message: Message):
     user_prompt = message.text
     llama_response = await send_to_llama(user_prompt)
@@ -48,13 +54,12 @@ async def process_mood(mood_data: dict):
 
     # Append the user message to the conversation history
     conversation_history.append(
-        {"role": "system", "content": "User was asked about their daily mood and was provided with the list of emojis"})
+        {"role": "assistant", "content": "How are you feeling today?"})
     conversation_history.append({"role": "user", "content": mood_data["emoji_status"]})
-    conversation_history.append({"role": "system",
-                                 "content": f"User was asked if they feel specific emotion associate with this mood and provided with the list of keywords"})
+    conversation_history.append({"role": "assistant",
+                                 "content": "Do you feel specific emotion associate with this mood?"})
     conversation_history.append({"role": "user", "content": mood_data["mood_keyword"]})
-    conversation_history.append({"role": "system", "content": "User was asked if they would like to talk about this"})
-
+    conversation_history.append({"role": "assistant", "content": "Do you want to talk about this?"})
 
 
 # Function to send a prompt to LLaMA via Ollama API

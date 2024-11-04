@@ -18,13 +18,13 @@ async def cmd_mood(message: Message):
 
 @mood_router.callback_query(F.data.endswith("emoji"))
 async def cmd_emoji(callback: CallbackQuery):
-    await callback.message.edit_text(text=f"Do you feeling specific emotion associate with this mood?",
+    await callback.message.edit_text(text=f"Do you feel specific emotion associate with this mood?",
                                         reply_markup=await generate_emoji_keywords(callback.data.split("_")[0]))
 
 
 @mood_router.callback_query(F.data.startswith("keyword"))
 async def cmd_emoji(callback: CallbackQuery):
-    user_prompt = f"When asked about their mood with the list of keywords, user responded with the following word: {callback.data.split("_")[1]}. Adapt your responses according to their mood. You can start by asking why they are feeling this way but don't instantly offer the solution."
+    user_prompt = f"When asked to describe their mood in the list of relevant keywords, user responded with the following word: {callback.data.split("_")[1]}. Adapt your responses according to their mood. You can start by asking why they are feeling this way but don't instantly offer the solution."
     llama_response = await send_to_llama(user_prompt)
     await callback.message.answer(llama_response)
     await callback.answer()

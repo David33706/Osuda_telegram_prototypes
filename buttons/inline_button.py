@@ -7,7 +7,7 @@ mood_emoji_buttons = InlineKeyboardMarkup(
                      [InlineKeyboardButton(text="😐", callback_data="neutral_emoji"),
                       InlineKeyboardButton(text="😡", callback_data="angry_emoji")],
                      [InlineKeyboardButton(text="😟", callback_data="worried_emoji"), ]])
-emoji_keywords = {"happy": ["Joyful, Cheerful, Satisfied"], "sad": ["Unhappy", "Gloomy", "Depressed"],
+emoji_keywords = {"happy": ["Joyful", "Cheerful", "Satisfied"], "sad": ["Unhappy", "Gloomy", "Depressed"],
                   "neutral": ["Indifferent", "Unmoved", "Apathetic"], "angry": ["Furious", "Irritated", "Frustrated"],
                   "worried": ["Anxious", "Overwhelmed", "Stressed"]}
 

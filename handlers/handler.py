@@ -43,11 +43,20 @@ async def handle_message(message: Message):
     await message.answer(llama_response)
 
 
-async def process_mood():
+async def process_mood(mood_data: dict):
     global conversation_history
 
     # Append the user message to the conversation history
-    conversation_history.append({"role": "system", "content": "User was asked about their mood and was provided with the list of relevant keyboards"})
+    conversation_history.append(
+        {"role": "system", "content": "User was asked about their daily mood and was provided with the list of emojis"})
+    conversation_history.append({"role": "user", "content": mood_data["emoji_status"]})
+    conversation_history.append({"role": "system",
+                                 "content": f"User was asked if they feel specific emotion associate with this mood and provided with the list of keywords"})
+    conversation_history.append({"role": "user", "content": mood_data["mood_keyword"]})
+    conversation_history.append({"role": "system", "content": "User was asked if they would like to talk about this"})
+
+
+
 # Function to send a prompt to LLaMA via Ollama API
 async def send_to_llama(user_prompt):
     global conversation_history
@@ -71,7 +80,6 @@ async def send_to_llama(user_prompt):
                 if 'message' in json_data:
                     assistant_reply = json_data['message']['content']
                     conversation_history.append({"role": "assistant", "content": assistant_reply})
-                    print(conversation_history)
                     return assistant_reply
                 else:
                     return f"Unexpected response format: {json_data}"

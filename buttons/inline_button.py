@@ -11,8 +11,6 @@ emoji_keywords = {"happy": ["Joyful", "Cheerful", "Satisfied"], "sad": ["Unhappy
                   "neutral": ["Indifferent", "Unmoved", "Apathetic"], "angry": ["Furious", "Irritated", "Frustrated"],
                   "worried": ["Anxious", "Overwhelmed", "Stressed"]}
 
-yes_no_mood = InlineKeyboardMarkup(
-    inline_keyboard=[[InlineKeyboardButton(text="Yes", callback_data="yes_mood"), InlineKeyboardButton(text="No", callback_data="no_mood")]])
 
 async def generate_emoji_keywords(current_mood_emoji):
     emoji_keywords_keyboard = InlineKeyboardBuilder()
@@ -24,3 +22,5 @@ async def generate_emoji_keywords(current_mood_emoji):
 
     return emoji_keywords_keyboard.as_markup()
 
+yes_no_mood = InlineKeyboardMarkup(
+    inline_keyboard=[[InlineKeyboardButton(text="Yes", callback_data="yes_mood"), InlineKeyboardButton(text="No", callback_data="no_mood")]])

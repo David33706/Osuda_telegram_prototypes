@@ -43,7 +43,7 @@ async def handle_message(message: Message):
     await message.answer(llama_response)
 
 
-async def process_mood(mood):
+async def process_mood():
     global conversation_history
 
     # Append the user message to the conversation history
@@ -71,10 +71,10 @@ async def send_to_llama(user_prompt):
                 if 'message' in json_data:
                     assistant_reply = json_data['message']['content']
                     conversation_history.append({"role": "assistant", "content": assistant_reply})
+                    print(conversation_history)
                     return assistant_reply
                 else:
                     return f"Unexpected response format: {json_data}"
             else:
                 return "Error communicating with the LLaMA model."
-
 # Register command and message handlers

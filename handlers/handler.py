@@ -43,6 +43,11 @@ async def handle_message(message: Message):
     await message.answer(llama_response)
 
 
+async def process_mood(mood):
+    global conversation_history
+
+    # Append the user message to the conversation history
+    conversation_history.append({"role": "system", "content": "User was asked about their mood and was provided with the list of relevant keyboards"})
 # Function to send a prompt to LLaMA via Ollama API
 async def send_to_llama(user_prompt):
     global conversation_history

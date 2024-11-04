@@ -24,7 +24,7 @@ async def cmd_emoji(callback: CallbackQuery):
 
 @mood_router.callback_query(F.data.startswith("keyword"))
 async def cmd_emoji(callback: CallbackQuery):
-    user_prompt = f"When asked to describe their mood in the list of relevant keywords, user responded with the following word: {callback.data.split("_")[1]}. Adapt your responses according to their mood. You can start by asking why they are feeling this way but don't instantly offer the solution."
+    user_prompt = f"{callback.data.split("_")[1]}"
     llama_response = await send_to_llama(user_prompt)
     await callback.message.answer(llama_response)
     await callback.answer()

@@ -6,8 +6,14 @@ import os
 
 from handler import router
 
+from aiogram.client.session.aiohttp import AiohttpSession
+
+# Setting up proxy
+session = AiohttpSession(proxy="http://95.216.36.231:8889/")
 load_dotenv()
-bot = Bot(os.getenv("TOKEN"))
+
+# Adding proxy to bot
+bot = Bot(os.getenv("TOKEN"), session=session)
 dp = Dispatcher()
 
 
